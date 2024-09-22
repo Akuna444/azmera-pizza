@@ -1,8 +1,9 @@
+import { ReactNode } from "react";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v14-appRouter";
 import { Roboto } from "next/font/google";
 import { ThemeProvider } from "@mui/material/styles";
 import theme from "../theme";
-import StoreProvider from '@/app/providers/StoreProvider';
+import StoreProvider from "@/app/providers/StoreProvider";
 
 const roboto = Roboto({
   weight: ["300", "400", "500", "700"],
@@ -11,14 +12,19 @@ const roboto = Roboto({
   variable: "--font-roboto",
 });
 
-export default function RootLayout(props) {
-  const { children } = props;
+// Define the props type for RootLayout
+interface RootLayoutProps {
+  children: ReactNode;
+}
+
+export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="en">
       <body className={roboto.variable}>
         <AppRouterCacheProvider>
           <StoreProvider>
-          <ThemeProvider theme={theme}>{children}</ThemeProvider> </StoreProvider>
+            <ThemeProvider theme={theme}>{children}</ThemeProvider>
+          </StoreProvider>
         </AppRouterCacheProvider>
       </body>
     </html>
