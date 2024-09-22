@@ -1,6 +1,7 @@
 // models/User.js
 const { DataTypes } = require("sequelize");
-const { sequelize } = require("../config/db");
+const sequelize = require("../config/db");
+const Role = require("./Role");
 
 const User = sequelize.define(
   "User",
@@ -26,14 +27,20 @@ const User = sequelize.define(
       type: DataTypes.STRING,
       allowNull: false,
     },
-    role: {
-      type: DataTypes.ENUM("customer", "manager", "super_admin"),
-      defaultValue: "customer",
+    location: {
+      type: DataTypes.STRING,
+    },
+    phone_number: {
+      type: DataTypes.STRING,
     },
   },
   {
     timestamps: true,
   }
 );
+
+// Define a many-to-one relationship between User and Role
+User.belongsTo(Role, { foreignKey: "roleId" });
+Role.hasMany(User, { foreignKey: "roleId" });
 
 module.exports = User;

@@ -1,16 +1,22 @@
-// routes/userRoutes.js
 const express = require("express");
+const router = express.Router();
 const {
   getUserProfile,
   updateUserProfile,
 } = require("../controllers/userController");
-const { authMiddleware } = require("../middlewares/authMiddleware");
-const router = express.Router();
+const applyAbilities = require("../middlewares/applyAbilities"); // CASL middleware
+const validate = require("../middlewares/validate");
+const updateUserProfileSchema = require("../schemas/userSchema");
 
-// Get the logged-in user's profile
-router.get("/me", authMiddleware, getUserProfile);
+// Get logged-in user profile
+router.get("/profile", applyAbilities, getUserProfile);
 
-// Update the logged-in user's profile
-router.put("/me", authMiddleware, updateUserProfile);
+// Update logged-in user profile (with validation)
+router.put(
+  "/profile",
+  applyAbilities,
+  validate(updateUserProfileSchema),
+  updateUserProfile
+);
 
 module.exports = router;

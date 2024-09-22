@@ -1,31 +1,14 @@
-// routes/pizzaRoutes.js
 const express = require("express");
-const { createPizza, updatePizza } = require("../controllers/pizzaController");
-const { pizzaValidation } = require("../utils/validation");
-const { validate } = require("../middlewares/validatorMiddleware");
-const { authMiddleware } = require("../middlewares/authMiddleware");
-const { roleMiddleware } = require("../middlewares/roleMiddleware");
-
 const router = express.Router();
+const { createPizza, getPizzas } = require("../controllers/pizzaController");
+const applyAbilities = require("../middlewares/applyAbilities"); // CASL middleware
+const validate = require("../middlewares/validate");
+const pizzaSchema = require("../schemas/pizzaSchema");
 
-// Create a new pizza (restaurant manager only)
-router.post(
-  "/",
-  authMiddleware,
-  roleMiddleware(["manager", "super_admin"]),
-  pizzaValidation,
-  validate,
-  createPizza
-);
+// Create pizza (with validation)
+router.post("/pizzas", applyAbilities, validate(pizzaSchema), createPizza);
 
-// Update an existing pizza (restaurant manager only)
-router.put(
-  "/:id",
-  authMiddleware,
-  roleMiddleware(["manager", "super_admin"]),
-  pizzaValidation,
-  validate,
-  updatePizza
-);
+// Get pizzas
+router.get("/pizzas", applyAbilities, getPizzas);
 
 module.exports = router;

@@ -1,36 +1,28 @@
-// routes/orderRoutes.js
 const express = require("express");
+const router = express.Router();
 const {
   createOrder,
+  getOrders,
   updateOrderStatus,
 } = require("../controllers/orderController");
+const applyAbilities = require("../middlewares/applyAbilities"); // CASL middleware
+const validate = require("../middlewares/validate");
 const {
-  orderValidation,
-  updateOrderStatusValidation,
-} = require("../utils/validation");
-const { validate } = require("../middlewares/validatorMiddleware");
-const { authMiddleware } = require("../middlewares/authMiddleware");
-const { roleMiddleware } = require("../middlewares/roleMiddleware");
+  orderSchema,
+  updateOrderStatusSchema,
+} = require("../schemas/orderSchema");
 
-const router = express.Router();
+// Create order (with validation)
+router.post("/orders", applyAbilities, validate(orderSchema), createOrder);
 
-// Place a new order (customer only)
-router.post(
-  "/",
-  authMiddleware,
-  roleMiddleware(["customer"]),
-  orderValidation,
-  validate,
-  createOrder
-);
+// Get orders
+router.get("/orders", applyAbilities, getOrders);
 
-// Update the status of an order (restaurant manager only)
+// Update order status (with validation)
 router.put(
-  "/:id/status",
-  authMiddleware,
-  roleMiddleware(["manager", "super_admin"]),
-  updateOrderStatusValidation,
-  validate,
+  "/orders/:id/status",
+  applyAbilities,
+  validate(updateOrderStatusSchema),
   updateOrderStatus
 );
 

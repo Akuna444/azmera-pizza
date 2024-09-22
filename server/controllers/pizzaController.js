@@ -1,93 +1,62 @@
+const { ForbiddenError } = require("@casl/ability");
+const { subject } = require("@casl/ability");
 const Pizza = require("../models/Pizza");
+const Topping = require("../models/Topping");
 
-// Get all pizzas for a restaurant
-const getPizzas = async (req, res) => {
-  const { restaurantId } = req.query;
-
-  try {
-    const pizzas = await Pizza.findAll({ where: { restaurantId } });
-    res.status(200).json(pizzas);
-  } catch (error) {
-    res.status(500).json({ message: "Failed to fetch pizzas" });
-  }
-};
-
-// Get a specific pizza by ID
-const getPizzaById = async (req, res) => {
-  const { id } = req.params;
-
-  try {
-    const pizza = await Pizza.findByPk(id);
-    if (!pizza) {
-      return res.status(404).json({ message: "Pizza not found" });
-    }
-    res.status(200).json(pizza);
-  } catch (error) {
-    res.status(500).json({ message: "Failed to fetch pizza" });
-  }
-};
-
-// Create a new pizza
+// Create a new pizza with default toppings
 const createPizza = async (req, res) => {
-  const { name, description, price, restaurantId } = req.body;
+  const { name, description, price, restaurantId, defaultToppings } = req.body;
+  const ability = req.ability; // CASL ability object from middleware
 
   try {
+    // Check if the user is allowed to create pizzas
+    ForbiddenError.from(ability).throwUnlessCan("create", "Pizza");
+
+    // Create the pizza
     const pizza = await Pizza.create({
       name,
       description,
       price,
       restaurantId,
     });
+
+    // Add default toppings if provided
+    if (defaultToppings && defaultToppings.length > 0) {
+      const toppings = await Topping.findAll({
+        where: { id: defaultToppings },
+      });
+      await pizza.addDefaultToppings(toppings);
+    }
+
     res.status(201).json(pizza);
   } catch (error) {
+    if (error instanceof ForbiddenError) {
+      return res.status(403).json({ message: error.message });
+    }
     res.status(500).json({ message: "Failed to create pizza" });
   }
 };
 
-// Update an existing pizza
-const updatePizza = async (req, res) => {
-  const { id } = req.params;
-  const { name, description, price } = req.body;
+// Get all pizzas for a restaurant (with default toppings)
+const getPizzas = async (req, res) => {
+  const { restaurantId } = req.query;
+  const ability = req.ability; // CASL ability object from middleware
 
   try {
-    let pizza = await Pizza.findByPk(id);
-    if (!pizza) {
-      return res.status(404).json({ message: "Pizza not found" });
-    }
+    // Check if the user is allowed to read pizzas
+    ForbiddenError.from(ability).throwUnlessCan("read", "Pizza");
 
-    // Update the pizza
-    pizza.name = name;
-    pizza.description = description;
-    pizza.price = price;
-    await pizza.save();
-
-    res.status(200).json(pizza);
+    const pizzas = await Pizza.findAll({
+      where: { restaurantId },
+      include: [{ model: Topping, as: "defaultToppings" }],
+    });
+    res.status(200).json(pizzas);
   } catch (error) {
-    res.status(500).json({ message: "Failed to update pizza" });
+    if (error instanceof ForbiddenError) {
+      return res.status(403).json({ message: error.message });
+    }
+    res.status(500).json({ message: "Failed to fetch pizzas" });
   }
 };
 
-// Delete a pizza
-const deletePizza = async (req, res) => {
-  const { id } = req.params;
-
-  try {
-    const pizza = await Pizza.findByPk(id);
-    if (!pizza) {
-      return res.status(404).json({ message: "Pizza not found" });
-    }
-
-    await pizza.destroy();
-    res.status(200).json({ message: "Pizza deleted" });
-  } catch (error) {
-    res.status(500).json({ message: "Failed to delete pizza" });
-  }
-};
-
-module.exports = {
-  getPizzas,
-  getPizzaById,
-  createPizza,
-  updatePizza,
-  deletePizza,
-};
+module.exports = { createPizza, getPizzas };

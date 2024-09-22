@@ -8,6 +8,30 @@ const registerValidation = [
   body("password")
     .isLength({ min: 6 })
     .withMessage("Password must be at least 6 characters long"),
+  body("location").notEmpty().withMessage("Location is required"),
+  body("phone_number")
+    .notEmpty()
+    .isMobilePhone()
+    .withMessage("Phone number is required and must be valid"),
+];
+
+// Super admin registration validation
+const adminRegisterValidation = [
+  body("name").notEmpty().withMessage("Name is required"),
+  body("email").isEmail().withMessage("Please provide a valid email"),
+  body("password")
+    .isLength({ min: 6 })
+    .withMessage("Password must be at least 6 characters long"),
+  body("role")
+    .notEmpty()
+    .withMessage("Role is required")
+    .isIn(["customer", "manager", "super_admin"]) // Ensure role is one of these
+    .withMessage("Invalid role provided"),
+  body("location").notEmpty().withMessage("Location is required"),
+  body("phone_number")
+    .notEmpty()
+    .isMobilePhone()
+    .withMessage("Phone number is required and must be valid"),
 ];
 
 // User login validation
@@ -53,6 +77,7 @@ const updateOrderStatusValidation = [
 module.exports = {
   registerValidation,
   loginValidation,
+  adminRegisterValidation,
   pizzaValidation,
   toppingValidation,
   orderValidation,

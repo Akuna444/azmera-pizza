@@ -1,21 +1,33 @@
-// utils/casl.js
 const { AbilityBuilder, Ability } = require("@casl/ability");
 
-function defineAbilitiesFor(user) {
+function defineAbilitiesFor(role) {
   const { can, cannot, build } = new AbilityBuilder(Ability);
 
-  if (user.role === "super_admin") {
-    can("manage", "all"); // Super admin can do everything
-  } else if (user.role === "manager") {
-    can("manage", "Order"); // Managers can manage orders
-    can("manage", "Pizza"); // Managers can manage pizzas
-    cannot("delete", "User"); // Managers cannot delete users
-  } else if (user.role === "customer") {
-    can("read", "Pizza"); // Customers can view pizzas
-    can("create", "Order"); // Customers can place orders
-  }
+  // Map your role permissions to CASL abilities
+  role.permissions.forEach((permission) => {
+    switch (permission) {
+      case "update_order_status":
+        can("update", "Order", { status: true });
+        break;
+      case "see_orders":
+        can("read", "Order");
+        break;
+      case "add_users":
+        can("create", "User");
+        break;
+      case "see_customers":
+        can("read", "Customer");
+        break;
+      case "create_roles":
+        can("create", "Role");
+        break;
+      default:
+        break;
+    }
+  });
 
+  // Return the built ability
   return build();
 }
 
-module.exports = { defineAbilitiesFor };
+module.exports = defineAbilitiesFor;
