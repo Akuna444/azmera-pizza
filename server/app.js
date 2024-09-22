@@ -11,7 +11,8 @@ const authRoutes = require("./routes/authRoutes");
 const pizzaRoutes = require("./routes/pizzaRoutes");
 const orderRoutes = require("./routes/orderRoutes");
 const userRoutes = require("./routes/userRoutes");
-const roleRoutes = require("./routes/roleRoutes"); // Add role routes
+const roleRoutes = require("./routes/roleRoutes");
+const toppingRoutes = require("./routes/toppingRoutes"); // Add role routes
 
 const app = express();
 
@@ -26,6 +27,7 @@ app.use(cookieParser());
 app.use("/api/auth", authRoutes);
 app.use("/api/pizzas", pizzaRoutes);
 app.use("/api/orders", orderRoutes);
+app.use("/api/toppings", toppingRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/roles", roleRoutes); // Add role routes
 

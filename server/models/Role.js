@@ -1,6 +1,6 @@
 // models/Role.js
 const { DataTypes } = require("sequelize");
-const sequelize = require("../config/db");
+const { sequelize } = require("../config/db");
 
 const permissionsEnum = [
   "update_order_status",
@@ -8,6 +8,7 @@ const permissionsEnum = [
   "add_users",
   "see_customers",
   "create_roles",
+  "super_admin",
 ];
 
 const Role = sequelize.define(

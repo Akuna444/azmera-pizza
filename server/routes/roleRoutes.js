@@ -6,16 +6,33 @@ const {
   updateRole,
 } = require("../controllers/roleController");
 const applyAbilities = require("../middlewares/applyAbilities"); // CASL middleware
+const authMiddleware = require("../middlewares/authMiddleware"); // Auth middleware to extract JWT
 const validate = require("../middlewares/validate");
-const roleSchema = require("../schemas/roleSchema");
+const roleSchema = require("../validations/role");
 
-// Create role (with validation)
-router.post("/roles", applyAbilities, validate(roleSchema), createRole);
+// Create role (with authentication, abilities, and validation)
+router.post(
+  "/add",
+  authMiddleware, // Extract JWT data
+  applyAbilities, // Apply CASL abilities
+  validate(roleSchema), // Validate request body
+  createRole
+);
 
-// Get roles
-router.get("/roles", getRoles);
+// Get roles (with authentication)
+router.get(
+  "/roles",
+  authMiddleware, // Extract JWT data
+  getRoles
+);
 
-// Update role (with validation)
-router.put("/roles/:id", applyAbilities, validate(roleSchema), updateRole);
+// Update role (with authentication, abilities, and validation)
+router.put(
+  "/:id",
+  authMiddleware, // Extract JWT data
+  applyAbilities, // Apply CASL abilities
+  validate(roleSchema), // Validate request body
+  updateRole
+);
 
 module.exports = router;

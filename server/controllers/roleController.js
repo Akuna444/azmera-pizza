@@ -29,6 +29,7 @@ const createRole = async (req, res) => {
 
     res.status(201).json(role);
   } catch (error) {
+    console.log(error);
     if (error instanceof ForbiddenError) {
       return res.status(403).json({ message: error.message });
     }

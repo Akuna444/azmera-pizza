@@ -7,24 +7,41 @@ const {
   deleteTopping,
 } = require("../controllers/toppingController");
 const applyAbilities = require("../middlewares/applyAbilities"); // CASL middleware
+const authMiddleware = require("../middlewares/authMiddleware"); // Auth middleware to extract JWT
 const validate = require("../middlewares/validate");
-const toppingSchema = require("../schemas/toppingSchema");
+const toppingSchema = require("../validations/topping");
 
-// Create topping (with validation)
-router.post("/toppings", validate(toppingSchema), createTopping);
+// Create topping (with authentication, abilities, and validation)
+router.post(
+  "/add",
+  authMiddleware, // Extract JWT data
+  applyAbilities, // Apply CASL abilities based on user's role
+  validate(toppingSchema), // Validate request body
+  createTopping
+);
 
-// Get toppings
-router.get("/toppings", getToppings);
+// Get toppings (with authentication)
+router.get(
+  "/",
+  authMiddleware, // Extract JWT data
+  getToppings
+);
 
-// Update topping (with validation)
+// Update topping (with authentication, abilities, and validation)
 router.put(
   "/toppings/:id",
-  applyAbilities,
-  validate(toppingSchema),
+  authMiddleware, // Extract JWT data
+  applyAbilities, // Apply CASL abilities
+  validate(toppingSchema), // Validate request body
   updateTopping
 );
 
-// Delete topping
-router.delete("/toppings/:id", applyAbilities, deleteTopping);
+// Delete topping (with authentication and abilities)
+router.delete(
+  "/toppings/:id",
+  authMiddleware, // Extract JWT data
+  applyAbilities, // Apply CASL abilities
+  deleteTopping
+);
 
 module.exports = router;

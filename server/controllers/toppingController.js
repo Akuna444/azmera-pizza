@@ -17,6 +17,7 @@ const createTopping = async (req, res) => {
     const topping = await Topping.create({ name });
     res.status(201).json(topping);
   } catch (error) {
+    console.log(error);
     res.status(500).json({ message: "Failed to create topping" });
   }
 };

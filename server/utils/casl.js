@@ -6,6 +6,13 @@ function defineAbilitiesFor(role) {
   // Map your role permissions to CASL abilities
   role.permissions.forEach((permission) => {
     switch (permission) {
+      case "super_admin":
+        can("manage", "User");
+        can("manage", "Order");
+        can("manage", "Topping");
+        can("manage", "Role");
+        can("manage", "Pizza");
+        can("manage", "Customer");
       case "update_order_status":
         can("update", "Order", { status: true });
         break;

@@ -1,6 +1,6 @@
 // models/Order.js
 const { DataTypes } = require("sequelize");
-const sequelize = require("../config/db");
+const { sequelize } = require("../config/db");
 const User = require("./User");
 const Pizza = require("./Pizza");
 const Topping = require("./Topping");

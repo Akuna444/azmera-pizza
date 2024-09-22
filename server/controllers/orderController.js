@@ -3,7 +3,6 @@ const { subject } = require("@casl/ability");
 const Order = require("../models/Order");
 const Topping = require("../models/Topping");
 const Pizza = require("../models/Pizza");
-const defineAbilitiesFor = require("../abilities");
 
 // Create a new order with custom toppings and quantity
 const createOrder = async (req, res) => {

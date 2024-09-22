@@ -6,23 +6,36 @@ const {
   updateOrderStatus,
 } = require("../controllers/orderController");
 const applyAbilities = require("../middlewares/applyAbilities"); // CASL middleware
+const authMiddleware = require("../middlewares/authMiddleware"); // Auth middleware to extract JWT
 const validate = require("../middlewares/validate");
 const {
   orderSchema,
   updateOrderStatusSchema,
-} = require("../schemas/orderSchema");
+} = require("../validations/order");
 
-// Create order (with validation)
-router.post("/orders", applyAbilities, validate(orderSchema), createOrder);
+// Create order (with authentication, abilities, and validation)
+router.post(
+  "/orders",
+  authMiddleware, // Extract JWT data
+  applyAbilities, // Apply CASL abilities based on user's role
+  validate(orderSchema), // Validate request body
+  createOrder
+);
 
-// Get orders
-router.get("/orders", applyAbilities, getOrders);
+// Get orders (with authentication and abilities)
+router.get(
+  "/orders",
+  authMiddleware, // Extract JWT data
+  applyAbilities, // Apply CASL abilities
+  getOrders
+);
 
-// Update order status (with validation)
+// Update order status (with authentication, abilities, and validation)
 router.put(
   "/orders/:id/status",
-  applyAbilities,
-  validate(updateOrderStatusSchema),
+  authMiddleware, // Extract JWT data
+  applyAbilities, // Apply CASL abilities
+  validate(updateOrderStatusSchema), // Validate request body
   updateOrderStatus
 );
 

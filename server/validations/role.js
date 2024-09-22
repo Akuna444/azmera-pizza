@@ -10,6 +10,7 @@ const roleSchema = z.object({
         "add_users",
         "see_customers",
         "create_roles",
+        "super_admin"
       ])
     )
     .nonempty("At least one permission is required"),

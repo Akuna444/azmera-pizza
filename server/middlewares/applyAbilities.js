@@ -1,5 +1,5 @@
-const Role = require("./models/Role");
-const defineAbilitiesFor = require("./utils/casl");
+const Role = require("../models/Role");
+const defineAbilitiesFor = require("../utils/casl");
 
 async function applyAbilities(req, res, next) {
   const role = await Role.findByPk(req.user.roleId);
