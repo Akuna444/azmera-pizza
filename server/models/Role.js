@@ -3,12 +3,13 @@ const { DataTypes } = require("sequelize");
 const { sequelize } = require("../config/db");
 
 const permissionsEnum = [
+  "super_admin",
+  "restaurant_manager",
   "update_order_status",
   "see_orders",
   "add_users",
   "see_customers",
   "create_roles",
-  "super_admin",
 ];
 
 const Role = sequelize.define(

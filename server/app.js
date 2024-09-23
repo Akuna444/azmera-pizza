@@ -13,6 +13,7 @@ const orderRoutes = require("./routes/orderRoutes");
 const userRoutes = require("./routes/userRoutes");
 const roleRoutes = require("./routes/roleRoutes");
 const toppingRoutes = require("./routes/toppingRoutes"); // Add role routes
+const restaurantRoutes = require("./routes/restaurantRoutes");
 
 const app = express();
 
@@ -30,6 +31,7 @@ app.use("/api/orders", orderRoutes);
 app.use("/api/toppings", toppingRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/roles", roleRoutes); // Add role routes
+app.use("/api/restaurant", restaurantRoutes);
 
 // Error handling
 app.use(notFound);

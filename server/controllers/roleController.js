@@ -11,15 +11,15 @@ const createRole = async (req, res) => {
     ForbiddenError.from(ability).throwUnlessCan("create", "Role");
 
     // Validate permissions (ensure they are part of the defined enum)
-    const validPermissions = Role.rawAttributes.permissions.values;
-    const invalidPermissions = permissions.filter(
-      (permission) => !validPermissions.includes(permission)
-    );
-    if (invalidPermissions.length > 0) {
-      return res.status(400).json({
-        message: `Invalid permissions: ${invalidPermissions.join(", ")}`,
-      });
-    }
+    // const validPermissions = Role.rawAttributes.permissions.values;
+    // const invalidPermissions = permissions.filter(
+    //   (permission) => !validPermissions.includes(permission)
+    // );
+    // if (invalidPermissions.length > 0) {
+    //   return res.status(400).json({
+    //     message: `Invalid permissions: ${invalidPermissions.join(", ")}`,
+    //   });
+    // }
 
     // Create the new role
     const role = await Role.create({

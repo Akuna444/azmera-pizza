@@ -21,8 +21,4 @@ const Topping = sequelize.define(
   }
 );
 
-// Relations
-Topping.belongsToMany(Pizza, { through: "PizzaToppings" });
-Pizza.belongsToMany(Topping, { through: "PizzaToppings" });
-
 module.exports = Topping;

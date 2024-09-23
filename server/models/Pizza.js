@@ -2,6 +2,7 @@
 const { DataTypes } = require("sequelize");
 const { sequelize } = require("../config/db");
 const Restaurant = require("./Restaurant");
+const Topping = require("./Topping");
 
 const Pizza = sequelize.define(
   "Pizza",
@@ -39,5 +40,15 @@ const Pizza = sequelize.define(
 // Relations
 Pizza.belongsTo(Restaurant, { foreignKey: "restaurantId" });
 Restaurant.hasMany(Pizza, { foreignKey: "restaurantId" });
+
+// Define many-to-many relationship between Pizza and Topping (default toppings)
+Pizza.belongsToMany(Topping, {
+  through: "PizzaToppings",
+  as: "defaultToppings",
+});
+Topping.belongsToMany(Pizza, {
+  through: "PizzaToppings",
+  as: "defaultToppings",
+});
 
 module.exports = Pizza;

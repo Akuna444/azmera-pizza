@@ -1,4 +1,3 @@
-// models/Restaurant.js
 const { DataTypes } = require("sequelize");
 const { sequelize } = require("../config/db");
 const User = require("./User");
@@ -20,9 +19,9 @@ const Restaurant = sequelize.define(
     },
     ownerId: {
       type: DataTypes.UUID,
-      allowNull: false,
+      allowNull: true,
       references: {
-        model: User,
+        model: "Users", // Use the table name as a string to avoid circular dependency
         key: "id",
       },
     },
@@ -32,7 +31,7 @@ const Restaurant = sequelize.define(
   }
 );
 
-// Relations
+// Define relationships after the model is defined
 Restaurant.belongsTo(User, { as: "owner", foreignKey: "ownerId" });
 User.hasMany(Restaurant, { foreignKey: "ownerId" });
 

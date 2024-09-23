@@ -17,7 +17,7 @@ router.post(
 
 // Get pizzas (with authentication and abilities)
 router.get(
-  "/",
+  "/all",
   authMiddleware, // Extract JWT data
   applyAbilities, // Apply CASL abilities
   getPizzas
