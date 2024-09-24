@@ -35,14 +35,7 @@ const register = async (req, res) => {
       roleId: customerRole.id, // Assign the customer role
     });
 
-    // Generate JWT token
-    const token = jwt.sign(
-      { id: user.id, roleId: user.roleId },
-      process.env.JWT_SECRET,
-      { expiresIn: "1h" }
-    );
-
-    res.status(201).json({ token });
+    res.status(201).json({ message: "User created Successfully" });
   } catch (error) {
     res.status(500).json({ message: "Server error" });
   }
@@ -123,7 +116,6 @@ const registerByAdmin = async (req, res) => {
         .json({ message: "You do not have permission to create users" });
     }
 
-    console.log(",<<.df", restaurantId);
     // Create the user with the specified role and restaurant
     user = await User.create({
       name,

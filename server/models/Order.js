@@ -1,9 +1,7 @@
-// models/Order.js
 const { DataTypes } = require("sequelize");
 const { sequelize } = require("../config/db");
 const User = require("./User");
-const Pizza = require("./Pizza");
-const Topping = require("./Topping");
+const OrderItem = require("./OrderItem");
 
 const Order = sequelize.define(
   "Order",
@@ -21,27 +19,11 @@ const Order = sequelize.define(
       type: DataTypes.FLOAT,
       allowNull: false,
     },
-    quantity: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      defaultValue: 1, // Default to 1 if not provided
-      validate: {
-        min: 1,
-      },
-    },
     customerId: {
       type: DataTypes.UUID,
       allowNull: false,
       references: {
         model: User,
-        key: "id",
-      },
-    },
-    pizzaId: {
-      type: DataTypes.UUID,
-      allowNull: false,
-      references: {
-        model: Pizza,
         key: "id",
       },
     },
@@ -51,14 +33,8 @@ const Order = sequelize.define(
   }
 );
 
-// Define many-to-many relationship between Order and Topping (custom toppings for each order)
-Order.belongsToMany(Topping, {
-  through: "OrderToppings",
-  as: "customToppings",
-});
-Topping.belongsToMany(Order, {
-  through: "OrderToppings",
-  as: "customToppings",
-});
+// Define the one-to-many relationship between Order and OrderItem
+Order.hasMany(OrderItem, { foreignKey: "orderId", as: "orderItems" });
+OrderItem.belongsTo(Order, { foreignKey: "orderId" });
 
 module.exports = Order;

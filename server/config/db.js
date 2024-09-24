@@ -16,7 +16,7 @@ const sequelize = new Sequelize(process.env.DATABASE_URL, {
 const connectDB = async () => {
   try {
     await sequelize.authenticate();
-    // await sequelize.sync({ force: false });
+    // await sequelize.sync({ force: false }); // Uncomment this line if you want to drop tables and create new ones every time the server starts.
     console.log("Database connected successfully");
   } catch (error) {
     console.error("Database connection failed:", error);
