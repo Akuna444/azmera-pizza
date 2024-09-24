@@ -5,6 +5,7 @@ const roleSchema = z.object({
   permissions: z
     .array(
       z.enum([
+        "customer",
         "restaurant_manager",
         "update_order_status",
         "see_orders",

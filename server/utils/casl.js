@@ -15,9 +15,12 @@ function defineAbilitiesFor(user) {
     can("manage", "Topping", { restaurantId }); // Can manage toppings in their restaurant
     can("read", "Order", { restaurantId }); // Can read orders for their restaurant
     can("update", "Order", { restaurantId, status: true }); // Can update the order status for their restaurant's orders
-    can("read", "Customer", { restaurantId }); // Can read customers of their restaurant
-    can("create", "User", { restaurantId }); // Can create users for their restaurant
-    can("create", "Role", { restaurantId }); // Can create roles for their restaurant
+    can("read", "User", { restaurantId }); // Can read customers of their restaurant
+    can("create", "User", { restaurantId }); // Can create users for their restaurant // Can create roles for their restaurant
+  } else if (user.role.name === "customer") {
+    // Customers can only create and read their own orders
+    can("create", "Order");
+    can("read", "Order", { customerId: user.id });
   }
   // Map your role permissions to CASL abilities
   user.role.permissions.forEach((permission) => {

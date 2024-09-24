@@ -4,6 +4,7 @@ const Order = require("../models/Order");
 const OrderItem = require("../models/OrderItem");
 const Pizza = require("../models/Pizza");
 const Topping = require("../models/Topping");
+const User = require("../models/User");
 
 // Create a new order with multiple pizzas, quantities, and custom toppings
 const createOrder = async (req, res) => {
@@ -73,22 +74,25 @@ const createOrder = async (req, res) => {
 
 // Get all orders for a restaurant (with custom toppings)
 const getOrders = async (req, res) => {
-  const customerId = req.user.id; // Use the decoded user ID
   const ability = req.ability; // CASL ability object from middleware
-
+  const restaurantId = req.user.restaurantId;
   try {
     // Check if the user is allowed to read orders
-    ForbiddenError.from(ability).throwUnlessCan("read", "Order");
+    ForbiddenError.from(ability).throwUnlessCan("read", "Order", restaurantId);
 
     const orders = await Order.findAll({
-      where: { customerId }, // Only fetch orders for the logged-in user
       include: [
+        {
+          model: User,
+          as: "customer", // Include user details for each order
+        },
         {
           model: OrderItem,
           as: "orderItems",
           include: [
             {
-              model: Pizza, // Include pizza details for each order item
+              model: Pizza,
+              as: "pizza", // Include pizza details for each order item
             },
             {
               model: Topping,

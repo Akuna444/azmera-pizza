@@ -15,16 +15,15 @@ const {
 
 // Create order (with authentication, abilities, and validation)
 router.post(
-  "/orders",
+  "/add",
   authMiddleware, // Extract JWT data
-  applyAbilities, // Apply CASL abilities based on user's role
-  validate(orderSchema), // Validate request body
+  applyAbilities, // Apply CASL abilities based on user's role // Validate request body
   createOrder
 );
 
 // Get orders (with authentication and abilities)
 router.get(
-  "/orders",
+  "/all",
   authMiddleware, // Extract JWT data
   applyAbilities, // Apply CASL abilities
   getOrders

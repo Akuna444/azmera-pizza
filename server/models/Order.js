@@ -34,6 +34,10 @@ const Order = sequelize.define(
 );
 
 // Define the one-to-many relationship between Order and OrderItem
+Order.belongsTo(User, {
+  foreignKey: "customerId", // Foreign key in Order
+  as: "customer", // Alias for the relationship
+});
 Order.hasMany(OrderItem, { foreignKey: "orderId", as: "orderItems" });
 OrderItem.belongsTo(Order, { foreignKey: "orderId" });
 

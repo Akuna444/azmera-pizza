@@ -1,6 +1,7 @@
 const { DataTypes } = require("sequelize");
 const { sequelize } = require("../config/db");
 const Topping = require("./Topping");
+const Pizza = require("./Pizza"); // Import the Pizza model
 
 const OrderItem = sequelize.define(
   "OrderItem",
@@ -44,6 +45,16 @@ Topping.belongsToMany(OrderItem, {
   through: "OrderItemToppings",
   as: "customToppings",
   foreignKey: "toppingId",
+});
+
+OrderItem.belongsTo(Pizza, {
+  foreignKey: "pizzaId", // Foreign key in OrderItem
+  as: "pizza", // Alias for the relationship
+});
+
+Pizza.hasMany(OrderItem, {
+  foreignKey: "pizzaId", // Foreign key in OrderItem
+  as: "orderItems", // Alias for the relationship
 });
 
 module.exports = OrderItem;
