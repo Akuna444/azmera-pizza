@@ -40,7 +40,13 @@ const createRole = async (req, res) => {
 // Get all roles
 const getRoles = async (req, res) => {
   try {
-    const roles = await Role.findAll();
+    const roles = await Role.findAll({
+      where: {
+        name: {
+          [Op.notIn]: ["super_admin", "restaurant_manager", "customer"],
+        },
+      },
+    });
     res.status(200).json(roles);
   } catch (error) {
     res.status(500).json({ message: "Failed to fetch roles" });
