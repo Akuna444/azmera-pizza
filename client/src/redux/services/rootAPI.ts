@@ -1,8 +1,9 @@
+import { backendURL } from "@/lib/utils";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 const addTokenToRequest = async (headers, { getState }) => {
   const state = getState();
-  const token = state.auth.userData.accessToken;
+  const token = state.restaurantAuth.token;
 
   if (token) {
     headers.set("Authorization", `Bearer ${token}`);
@@ -12,9 +13,9 @@ const addTokenToRequest = async (headers, { getState }) => {
 
 export const apiSlice = createApi({
   reducerPath: "api",
-  tagTypes: ["User"],
+  tagTypes: ["Orders", "Toppings", "Pizzas"],
   baseQuery: fetchBaseQuery({
-    baseUrl: `${process.env.NEXT_PUBLIC_URL}/api`,
+    baseUrl: backendURL,
     prepareHeaders: (headers, { getState }) => {
       return addTokenToRequest(headers, { getState });
     },
