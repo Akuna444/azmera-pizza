@@ -16,8 +16,8 @@ import { withZodSchema } from "formik-validator-zod";
 import {
   useGetAllToppingsQuery,
   usePostToppingsMutation,
-} from "@/redux/services/toppings/toppings";
-import { usePostPizzasMutation } from "@/redux/services/pizzas/pizzas";
+} from "@/redux/services/toppings";
+import { usePostPizzasMutation } from "@/redux/services/pizzas";
 import { useState } from "react";
 
 // Define the Zod schema for validation

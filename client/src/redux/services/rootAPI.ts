@@ -13,7 +13,7 @@ const addTokenToRequest = async (headers, { getState }) => {
 
 export const apiSlice = createApi({
   reducerPath: "api",
-  tagTypes: ["Orders", "Toppings", "Pizzas"],
+  tagTypes: ["Orders", "Toppings", "Pizzas", "Roles"],
   baseQuery: fetchBaseQuery({
     baseUrl: backendURL,
     prepareHeaders: (headers, { getState }) => {

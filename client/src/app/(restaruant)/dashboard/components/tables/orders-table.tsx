@@ -13,7 +13,7 @@ import { Box, Button, Typography } from "@mui/material";
 
 import { statusOptions } from "./constants";
 
-import { useGetAllOrdersQuery } from "@/redux/services/orders/orders";
+import { useGetAllOrdersQuery } from "@/redux/services/orders";
 
 const OrderTable = () => {
   const [validationErrors, setValidationErrors] = useState<
@@ -109,6 +109,7 @@ const OrderTable = () => {
       },
     },
     onCreatingRowCancel: () => setValidationErrors({}),
+   
     onCreatingRowSave: handleCreateUser,
     renderBottomToolbarCustomActions: () => (
       <Box sx={{ display: "flex", gap: "1rem", alignItems: "center" }}>

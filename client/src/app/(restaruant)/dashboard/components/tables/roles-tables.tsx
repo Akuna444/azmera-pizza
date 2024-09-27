@@ -5,17 +5,25 @@ import {
   MaterialReactTable,
   // createRow,
   type MRT_ColumnDef,
+  MRT_EditActionButtons,
   type MRT_Row,
   type MRT_TableOptions,
   useMaterialReactTable,
 } from "material-react-table";
-import { Box, Button, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Typography,
+} from "@mui/material";
 
 import { statusOptions } from "./constants";
 
-import { useGetAllOrdersQuery } from "@/redux/services/orders/orders";
+import { useGetAllRolesQuery } from "@/redux/services/roles";
 
-const OrderTable = () => {
+const RolesTable = () => {
   const [validationErrors, setValidationErrors] = useState<
     Record<string, string | undefined>
   >({});
@@ -31,35 +39,15 @@ const OrderTable = () => {
         size: 80,
       },
       {
-        accessorKey: "pizza.name",
+        accessorKey: "name",
         header: "Name",
         enableEditing: false,
       },
-      {
-        accessorKey: "customToppings[0].name",
-        header: "Toppings",
-        enableEditing: false,
-      },
-      {
-        accessorKey: "customer.phone_number",
-        header: "Customer",
-        enableEditing: false,
-      },
-      {
-        accessorKey: "quantity",
-        header: "Quantitiy",
-        enableEditing: false,
-      },
+
       {
         accessorKey: "createdAt",
         header: "Created At",
         enableEditing: false,
-      },
-      {
-        accessorKey: "status",
-        header: "Status",
-        editVariant: "select",
-        editSelectOptions: statusOptions,
       },
     ],
     [editedOrders, validationErrors]
@@ -71,7 +59,9 @@ const OrderTable = () => {
     isError: isLoadingOrdersError,
     isFetching: isFetchingOrders,
     isLoading: isLoadingOrders,
-  } = useGetAllOrdersQuery();
+  } = useGetAllRolesQuery();
+
+  console.log(fetchedOrders, "heydfhskfj");
 
   //call UPDATE hook
 
@@ -110,6 +100,35 @@ const OrderTable = () => {
     },
     onCreatingRowCancel: () => setValidationErrors({}),
     onCreatingRowSave: handleCreateUser,
+    renderCreateRowDialogContent: ({ table, row, internalEditComponents }) => (
+      <>
+        <DialogTitle variant="h3">Create New User</DialogTitle>
+        <DialogContent
+          sx={{ display: "flex", flexDirection: "column", gap: "1rem" }}
+        >
+          {internalEditComponents} {/* or render custom edit components here */}
+        </DialogContent>
+        <DialogActions>
+          <MRT_EditActionButtons variant="text" table={table} row={row} />
+        </DialogActions>
+      </>
+    ),
+    renderTopToolbarCustomActions: ({ table }) => (
+      <Button
+        variant="contained"
+        onClick={() => {
+          table.setCreatingRow(true); //simplest way to open the create row modal with no default values
+          //or you can pass in a row object to set default values with the `createRow` helper function
+          // table.setCreatingRow(
+          //   createRow(table, {
+          //     //optionally pass in default values for the new row, useful for nested data or other complex scenarios
+          //   }),
+          // );
+        }}
+      >
+        Add New Roles
+      </Button>
+    ),
     renderBottomToolbarCustomActions: () => (
       <Box sx={{ display: "flex", gap: "1rem", alignItems: "center" }}>
         <Button
@@ -138,4 +157,4 @@ const OrderTable = () => {
   return <MaterialReactTable table={table} />;
 };
 
-export default OrderTable;
+export default RolesTable;

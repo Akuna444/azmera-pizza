@@ -1,7 +1,8 @@
 "use client";
+import RolesTable from "../dashboard/components/tables/roles-tables";
 
 const Roles = () => {
-  return <div>Roles</div>;
+  return <RolesTable />;
 };
 
 export default Roles;
