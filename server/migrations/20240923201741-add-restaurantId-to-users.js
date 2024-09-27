@@ -2,21 +2,22 @@
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    // Add restaurantId column to Users table
-    await queryInterface.addColumn("Users", "restaurantId", {
+    await queryInterface.changeColumn("Orders", "customerId", {
       type: Sequelize.UUID,
-      allowNull: true,
+      allowNull: false, // Set customerId to NOT NULL
       references: {
-        model: "Restaurants", // Table name for the reference
+        model: "Users", // Assuming customerId references the User model
         key: "id",
       },
-      onUpdate: "CASCADE", // Optional: update related rows if the referenced id changes
-      onDelete: "SET NULL", // Optional: set restaurantId to null if the referenced restaurant is deleted
+      onUpdate: "CASCADE",
+      onDelete: "SET NULL", // or 'CASCADE' if you want to delete orders when a customer is deleted
     });
   },
 
   down: async (queryInterface, Sequelize) => {
-    // Remove restaurantId column from Users table
-    await queryInterface.removeColumn("Users", "restaurantId");
+    await queryInterface.changeColumn("Orders", "customerId", {
+      type: Sequelize.UUID,
+      allowNull: true, // Rollback to allow NULL if necessary
+    });
   },
 };

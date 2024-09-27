@@ -22,14 +22,14 @@ router.post(
 
 // Get toppings (with authentication)
 router.get(
-  "/",
+  "/all",
   authMiddleware, // Extract JWT data
   getToppings
 );
 
 // Update topping (with authentication, abilities, and validation)
 router.put(
-  "/toppings/:id",
+  "/:id",
   authMiddleware, // Extract JWT data
   applyAbilities, // Apply CASL abilities
   validate(toppingSchema), // Validate request body
@@ -38,7 +38,7 @@ router.put(
 
 // Delete topping (with authentication and abilities)
 router.delete(
-  "/toppings/:id",
+  "/:id",
   authMiddleware, // Extract JWT data
   applyAbilities, // Apply CASL abilities
   deleteTopping

@@ -12,12 +12,7 @@ const validate = require("../middlewares/validate"); // Validation middleware
 const restaurantSchema = require("../validations/restaurant"); // Validation schema for restaurant creation and updates
 
 // Create a restaurant (Super Admin only, with optional ownerId)
-router.post(
-  "/add",
-  authMiddleware, // Ensure the user is authenticated
-  applyAbilities, // Check if the user has permission to create restaurants // Validate request body using restaurant schema
-  createRestaurant
-);
+router.post("/add", createRestaurant);
 
 // Get all restaurants (Super Admin only)
 router.get(

@@ -1,6 +1,5 @@
 const { DataTypes } = require("sequelize");
 const { sequelize } = require("../config/db");
-const User = require("./User");
 const OrderItem = require("./OrderItem");
 
 const Order = sequelize.define(
@@ -11,21 +10,10 @@ const Order = sequelize.define(
       defaultValue: DataTypes.UUIDV4,
       primaryKey: true,
     },
-    status: {
-      type: DataTypes.ENUM("pending", "preparing", "delivered"),
-      defaultValue: "pending",
-    },
+
     totalCost: {
       type: DataTypes.FLOAT,
       allowNull: false,
-    },
-    customerId: {
-      type: DataTypes.UUID,
-      allowNull: false,
-      references: {
-        model: User,
-        key: "id",
-      },
     },
   },
   {
@@ -34,10 +22,7 @@ const Order = sequelize.define(
 );
 
 // Define the one-to-many relationship between Order and OrderItem
-Order.belongsTo(User, {
-  foreignKey: "customerId", // Foreign key in Order
-  as: "customer", // Alias for the relationship
-});
+
 Order.hasMany(OrderItem, { foreignKey: "orderId", as: "orderItems" });
 OrderItem.belongsTo(Order, { foreignKey: "orderId" });
 

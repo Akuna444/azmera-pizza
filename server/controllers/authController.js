@@ -20,9 +20,12 @@ const register = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, salt);
 
     // Find the "customer" role by its name
-    const customerRole = await Role.findOne({ where: { name: "customer" } });
+    let customerRole = await Role.findOne({ where: { name: "customer" } });
     if (!customerRole) {
-      return res.status(500).json({ message: "Customer role not found" });
+      customerRole = await Role.create({
+        name: "customer",
+        permissions: ["customer"],
+      });
     }
 
     // Create the user with the "customer" role
@@ -37,28 +40,20 @@ const register = async (req, res) => {
 
     res.status(201).json({ message: "User created Successfully" });
   } catch (error) {
+    console.log(error);
     res.status(500).json({ message: "Server error" });
   }
 };
 
 // Register a user by Super Admin (with specified role)
 const registerByAdmin = async (req, res) => {
-  const {
-    name,
-    email,
-    password,
-    roleId,
-    location,
-    phone_number,
-    restaurantId,
-  } = req.body;
+  const { name, email, password, roleId, location, phone_number } = req.body;
   const ability = req.ability; // CASL ability object from middleware
 
   try {
     // Check if the user is allowed to create users with roles
     ForbiddenError.from(ability).throwUnlessCan("create", "User");
 
-    console.log(req.user, "Current >>> user");
     // Check if user already exists
     let user = await User.findOne({ where: { email } });
     if (user) {
@@ -75,48 +70,14 @@ const registerByAdmin = async (req, res) => {
       return res.status(400).json({ message: "Role not found" });
     }
 
-    // Check if the manager is trying to assign the super_admin role
-    if (
-      req.user.role.name === "restaurant_manager" &&
-      role.name === "super_admin"
-    ) {
-      return res
-        .status(403)
-        .json({ message: "Managers cannot assign the super_admin role" });
+    // Prevent the assignment of the super_admin role by non-super admins
+    if (req.user.role.name !== "super_admin" && role.name === "super_admin") {
+      return res.status(403).json({
+        message: "You do not have permission to assign super_admin role",
+      });
     }
 
-    // Determine the restaurantId
-    let assignedRestaurantId;
-
-    if (req.user.role.name === "restaurant_manager") {
-      // Manager: Automatically assign the restaurantId from the manager's restaurant
-      const manager = await User.findByPk(req.user.id, { include: Restaurant });
-      if (!manager.restaurantId) {
-        return res
-          .status(400)
-          .json({ message: "Manager is not associated with a restaurant" });
-      }
-      assignedRestaurantId = manager.restaurantId;
-    } else if (req.user.role.name === "super_admin") {
-      // Super Admin: Use the provided restaurantId
-      if (!restaurantId) {
-        return res
-          .status(400)
-          .json({ message: "Restaurant ID is required for Super Admin" });
-      }
-
-      const restaurant = await Restaurant.findByPk(restaurantId);
-      if (!restaurant) {
-        return res.status(400).json({ message: "Restaurant not found" });
-      }
-      assignedRestaurantId = restaurantId;
-    } else {
-      return res
-        .status(403)
-        .json({ message: "You do not have permission to create users" });
-    }
-
-    // Create the user with the specified role and restaurant
+    // Create the user with the specified role
     user = await User.create({
       name,
       email,
@@ -124,16 +85,9 @@ const registerByAdmin = async (req, res) => {
       location,
       phone_number,
       roleId: role.id,
-      restaurantId: assignedRestaurantId, // Assign the restaurantId
     });
-    console.log(user, "usa created");
-    if (role.name === "restaurant_manager") {
-      const restaurant = await Restaurant.findByPk(assignedRestaurantId);
-      restaurant.ownerId = user.id;
-      await restaurant.save();
-    }
 
-    res.status(201).json({ message: "User created successfully" });
+    res.status(201).json({ message: "User created successfully", user });
   } catch (error) {
     if (error instanceof ForbiddenError) {
       return res.status(403).json({ message: error.message });
@@ -143,8 +97,69 @@ const registerByAdmin = async (req, res) => {
   }
 };
 
+const addRestaurantManager = async (req, res) => {
+  const { name, email, password, location, phone_number, restaurantId } =
+    req.body;
+
+  console.log(req.body);
+
+  try {
+    // Check if user already exists
+    let user = await User.findOne({ where: { email } });
+    if (user) {
+      return res.status(400).json({ message: "User already exists" });
+    }
+
+    // Hash the password
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    // Get the "restaurant_manager" role
+    let role = await Role.findOne({
+      where: { name: "restaurant_manager" },
+    });
+    if (!role) {
+      role = await Role.create({
+        name: "restaurant_manager",
+        permissions: ["restaurant_manager"],
+      });
+    }
+
+    // Check if the restaurant exists
+    const restaurant = await Restaurant.findByPk(restaurantId);
+    if (!restaurant) {
+      return res.status(400).json({ message: "Restaurant not found" });
+    }
+    // Create the user with the role of "restaurant_manager"
+    user = await User.create({
+      name,
+      email,
+      password: hashedPassword,
+      location,
+      phone_number,
+      roleId: role.id,
+      restaurantId: restaurant.id, // Assign the manager to this restaurant
+    });
+
+    // Assign the created user as the owner/manager of the restaurant
+    restaurant.ownerId = user.id;
+    await restaurant.save();
+
+    res
+      .status(201)
+      .json({ message: "Restaurant manager created successfully", user });
+  } catch (error) {
+    console.log(error, "err");
+    if (error instanceof ForbiddenError) {
+      return res.status(403).json({ message: error.message });
+    }
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
 // Login an existing user
-const login = async (req, res) => {
+const adminlogin = async (req, res) => {
   const { email, password } = req.body;
 
   try {
@@ -152,6 +167,14 @@ const login = async (req, res) => {
     const user = await User.findOne({ where: { email }, include: [Role] });
     if (!user) {
       return res.status(400).json({ message: "Invalid credentials" });
+    }
+    const role = Role.findByPk(user.roleId);
+    if (!role) {
+      return res.status(400).json({ message: "Invalid role" });
+    }
+
+    if (user.Role.name === "customer") {
+      return res.status(403).json({ message: "Unauthorized" });
     }
 
     // Validate password
@@ -167,11 +190,103 @@ const login = async (req, res) => {
       { expiresIn: "1h" }
     );
 
-    res.status(200).json({ token });
+    res.cookie("restaurantUser", token, {
+      httpOnly: true, // Prevents access by client-side JavaScript
+      secure: process.env.NODE_ENV === "production", // Ensures cookie is sent only over HTTPS in production
+      sameSite: "strict", // Prevents CSRF attacks
+      maxAge: 60 * 60 * 1000, // 1 hour in milliseconds
+    });
+
+    res.status(200).json({
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      role: user.Role.name,
+      restaurantId: user.restaurantId,
+      token,
+    });
   } catch (error) {
     console.log(error, "errr");
     res.status(500).json({ message: "Server error" });
   }
 };
 
-module.exports = { register, registerByAdmin, login };
+const login = async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    // Check if the user exists and include their role
+    const user = await User.findOne({ where: { email }, include: [Role] });
+    if (!user) {
+      return res.status(400).json({ message: "Invalid credentials" });
+    }
+
+    // Validate that the user has the role "customer"
+    if (user.Role.name !== "customer") {
+      return res.status(403).json({ message: "Only customers can log in" });
+    }
+
+    // Validate the password
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(400).json({ message: "Invalid credentials" });
+    }
+
+    // Generate JWT token
+    const token = jwt.sign(
+      { id: user.id, roleId: user.roleId },
+      process.env.JWT_SECRET,
+      { expiresIn: "1h" }
+    );
+
+    res.cookie("user", token, {
+      httpOnly: true, // Prevents access by client-side JavaScript
+      secure: process.env.NODE_ENV === "production", // Ensures cookie is sent only over HTTPS in production
+      sameSite: "strict", // Prevents CSRF attacks
+      maxAge: 60 * 60 * 1000, // 1 hour in milliseconds
+    });
+
+    // Send a sanitized user object in the response
+    res.status(200).json({
+      id: user.id,
+      email: user.email,
+      role: user.Role.name,
+      name: user.name,
+      token,
+    });
+  } catch (error) {
+    console.log(error, "Error during login");
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+// Logout route in Express to clear both cookies
+const logout = async (req, res) => {
+  // Clear the 'user' cookie
+  res.clearCookie("user", {
+    path: "/", // Ensure this matches the path the cookie was set for
+    httpOnly: true, // Same as the cookie's original settings
+    secure: process.env.NODE_ENV === "production", // Use secure only in production
+    sameSite: "strict", // Ensure SameSite settings are consistent
+  });
+
+  // Clear the 'restaurantUser' cookie
+  res.clearCookie("restaurantUser", {
+    path: "/", // Ensure this matches the path the cookie was set for
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "strict",
+  });
+
+  // Send a response indicating successful logout
+  return res.status(200).json({ message: "Logged out successfully" });
+};
+
+module.exports = {
+  register,
+  adminlogin,
+  addRestaurantManager,
+  registerByAdmin,
+  login,
+  logout,
+};

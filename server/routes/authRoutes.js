@@ -3,7 +3,10 @@ const router = express.Router();
 const {
   register,
   registerByAdmin,
+  addRestaurantManager,
   login,
+  logout,
+  adminlogin,
 } = require("../controllers/authController");
 const applyAbilities = require("../middlewares/applyAbilities"); // CASL middleware
 const authMiddleware = require("../middlewares/authMiddleware"); // Auth middleware to extract JWT data
@@ -26,7 +29,11 @@ router.post(
   registerByAdmin
 );
 
+router.post("/add-manager", addRestaurantManager);
+
 // User login (with validation)
+router.post("/admin-login", validate(loginSchema), adminlogin);
 router.post("/login", validate(loginSchema), login);
+router.post("/logout", logout);
 
 module.exports = router;

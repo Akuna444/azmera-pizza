@@ -21,7 +21,6 @@ const createOrder = async (req, res) => {
 
     // Create the order
     const order = await Order.create({
-      customerId, // Use decoded customerId
       totalCost: 0, // Will update later after calculation
     });
 
@@ -46,6 +45,7 @@ const createOrder = async (req, res) => {
         pizzaId,
         quantity,
         price: pizza.price,
+        customerId,
       });
 
       // If there are custom toppings, associate them with the new OrderItem
@@ -83,13 +83,13 @@ const getOrders = async (req, res) => {
     const orders = await Order.findAll({
       include: [
         {
-          model: User,
-          as: "customer", // Include user details for each order
-        },
-        {
           model: OrderItem,
           as: "orderItems",
           include: [
+            {
+              model: User,
+              as: "customer", // Include user details for each order
+            },
             {
               model: Pizza,
               as: "pizza", // Include pizza details for each order item
@@ -120,7 +120,7 @@ const updateOrderStatus = async (req, res) => {
   const ability = req.ability; // CASL ability object from middleware
 
   try {
-    const order = await Order.findByPk(id);
+    const order = await OrderItem.findByPk(id);
     if (!order) {
       return res.status(404).json({ message: "Order not found" });
     }

@@ -4,12 +4,10 @@ const User = require("../models/User");
 
 // Create a new restaurant
 const createRestaurant = async (req, res) => {
-  const ability = req.ability; // CASL ability object from middleware
   const { name, location, ownerId } = req.body;
 
   try {
-    // Check if the user has permission to create a restaurant
-    ForbiddenError.from(ability).throwUnlessCan("create", "Restaurant");
+    // Check if the user has permission to create a restauran
 
     let owner = null;
 
