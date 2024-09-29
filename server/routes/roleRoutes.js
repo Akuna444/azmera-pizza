@@ -21,7 +21,7 @@ router.post(
 
 // Get roles (with authentication)
 router.get(
-  "/roles",
+  "/all",
   authMiddleware, // Extract JWT data
   getRoles
 );

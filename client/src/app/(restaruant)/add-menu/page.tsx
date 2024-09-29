@@ -36,6 +36,7 @@ const AddToMenu = () => {
   const [isAddingTopping, setIsAddingTopping] = useState(false);
   const [newTopping, setNewTopping] = useState("");
   const [addingError, setAddingError] = useState(null);
+  const [pizzaImage, setPizzaImage] = useState(null);
   const { data: toppings, isLoading: toppingIsLoading } =
     useGetAllToppingsQuery();
   const [postTopping, { isLoading: addingToppingIsLoading }] =
@@ -51,13 +52,29 @@ const AddToMenu = () => {
     },
     validate: withZodSchema(FormSchema),
     onSubmit: async (values) => {
-      console.log(values, "from submission");
-      const res = await postPizzas(values);
-      console.log(res, "fjs");
+      console.log("thiss gooonann", values);
+      const formData = new FormData();
+      formData.append("name", values.name);
+      formData.append("price", values.price);
+      formData.append("pizzaImage", pizzaImage);
+      values.defaultToppings.forEach((toppings, index) => {
+        formData.append(`defaultToppings[${index}`, toppings);
+      });
+      const res = await postPizzas(formData);
+      console.log(res, "dkfjskdfjsksjfskfjsfj");
+      if (res.success) {
+        alert("Pizza added successfully");
+        formik.resetForm();
+        setPizzaImage(null);
+      }
 
       // Handle form submission
     },
   });
+
+  const handleFileChange = (e) => {
+    setPizzaImage(e.target.files[0]);
+  };
 
   // Handle checkbox change for toppings
   const handleToppingsChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -170,6 +187,15 @@ const AddToMenu = () => {
           {formik.touched.price && formik.errors.price && (
             <div>{formik.errors.price}</div>
           )}
+        </FormControl>
+        <FormControl>
+          <InputLabel htmlFor="pizzaImage">Pizza Image</InputLabel>
+          <Input
+            id="pizzaImage"
+            name="pizzaImage"
+            type="file"
+            onChange={handleFileChange}
+          />
         </FormControl>
 
         {/* Submit Button */}

@@ -3,7 +3,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 const addTokenToRequest = async (headers, { getState }) => {
   const state = getState();
-  const token = state.restaurantAuth.token;
+  const token = state.userAuth.token;
 
   if (token) {
     headers.set("Authorization", `Bearer ${token}`);

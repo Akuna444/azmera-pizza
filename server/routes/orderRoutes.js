@@ -30,8 +30,8 @@ router.get(
 );
 
 // Update order status (with authentication, abilities, and validation)
-router.put(
-  "/orders/:id/status",
+router.patch(
+  "/update/:id",
   authMiddleware, // Extract JWT data
   applyAbilities, // Apply CASL abilities
   validate(updateOrderStatusSchema), // Validate request body

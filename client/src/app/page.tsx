@@ -13,34 +13,14 @@ import {
   Container,
 } from "@mui/material";
 import LogoutButton from "@/components/ui/LogoutButton";
-
-// Example pizzas data
-const pizzas = [
-  {
-    id: 1,
-    name: "Pizza Margherita",
-    price: 9.99,
-    image: "https://source.unsplash.com/1600x900/?pizza",
-    description: "Classic pizza with mozzarella cheese and fresh tomatoes",
-  },
-  {
-    id: 2,
-    name: "Pepperoni Pizza",
-    price: 12.99,
-    image: "https://source.unsplash.com/1600x900/?pepperoni-pizza",
-    description: "Delicious pizza topped with pepperoni and cheese",
-  },
-  {
-    id: 3,
-    name: "Vegan Pizza",
-    price: 11.99,
-    image: "https://source.unsplash.com/1600x900/?vegan-pizza",
-    description: "A healthy vegan pizza with plant-based toppings",
-  },
-  // Add more pizzas as needed
-];
+import { useGetAllPizzasQuery } from "@/redux/services/pizzas";
+import Link from "next/link";
 
 const PizzaListPage = () => {
+  const { data: pizzas, isLoading } = useGetAllPizzasQuery();
+  if (isLoading) {
+    return <p>Loading...</p>;
+  }
   return (
     <Container>
       <Typography variant="h4" gutterBottom sx={{ mt: 4 }}>
@@ -65,11 +45,17 @@ const PizzaListPage = () => {
                 <Typography variant="h6" sx={{ mt: 2 }}>
                   ${product.price}
                 </Typography>
+                <Typography variant="h6" sx={{ mt: 2 }}>
+                  {product?.Restaurant?.name}
+                </Typography>
               </CardContent>
               <CardActions>
-                <Button size="small" variant="contained" color="primary">
-                  Shop Now
-                </Button>
+                <Link href={`/order/${product.id}`}>
+                  {" "}
+                  <Button size="small" variant="contained" color="primary">
+                    Order
+                  </Button>{" "}
+                </Link>
               </CardActions>
             </Card>
           </Grid>

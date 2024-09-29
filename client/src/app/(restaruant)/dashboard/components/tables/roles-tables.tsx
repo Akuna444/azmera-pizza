@@ -41,7 +41,7 @@ const RolesTable = () => {
       {
         accessorKey: "name",
         header: "Name",
-        enableEditing: false,
+        enableEditing: true,
       },
 
       {
@@ -81,8 +81,8 @@ const RolesTable = () => {
   const table = useMaterialReactTable({
     columns,
     data: fetchedOrders[0]?.orderItems || [],
-    createDisplayMode: "row", // ('modal', and 'custom' are also available)
-    editDisplayMode: "table", // ('modal', 'row', 'cell', and 'custom' are also
+    createDisplayMode: "modal", //default ('row', and 'custom' are also available)
+    editDisplayMode: "modal", //default ('row', 'cell', 'table', and 'custom' are also available)
     enableEditing: true,
     enableRowActions: true,
     positionActionsColumn: "last",
@@ -107,6 +107,22 @@ const RolesTable = () => {
           sx={{ display: "flex", flexDirection: "column", gap: "1rem" }}
         >
           {internalEditComponents} {/* or render custom edit components here */}
+        </DialogContent>
+        <DialogActions>
+          <MRT_EditActionButtons variant="text" table={table} row={row} />
+        </DialogActions>
+      </>
+    ),
+    renderEditRowDialogContent: ({ table, row, internalEditComponents }) => (
+      <>
+        <DialogTitle variant="h3">Edit User</DialogTitle>
+        <DialogContent
+          sx={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}
+        >
+          {
+        
+        
+        } {/* or render custom edit components here */}
         </DialogContent>
         <DialogActions>
           <MRT_EditActionButtons variant="text" table={table} row={row} />

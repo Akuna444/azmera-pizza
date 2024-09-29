@@ -1,5 +1,6 @@
 const { ForbiddenError } = require("@casl/ability");
 const Role = require("../models/Role");
+const { Op } = require("sequelize");
 
 // Create a new role with permissions (only for super admins)
 const createRole = async (req, res) => {
@@ -49,6 +50,7 @@ const getRoles = async (req, res) => {
     });
     res.status(200).json(roles);
   } catch (error) {
+    console.log(error, "err");
     res.status(500).json({ message: "Failed to fetch roles" });
   }
 };

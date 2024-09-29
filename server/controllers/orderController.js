@@ -62,7 +62,7 @@ const createOrder = async (req, res) => {
     order.totalCost = totalCost;
     await order.save();
 
-    res.status(201).json(order);
+    res.status(201).json({ success: true, data: order });
   } catch (error) {
     if (error instanceof ForbiddenError) {
       return res.status(403).json({ message: error.message });
@@ -80,25 +80,19 @@ const getOrders = async (req, res) => {
     // Check if the user is allowed to read orders
     ForbiddenError.from(ability).throwUnlessCan("read", "Order", restaurantId);
 
-    const orders = await Order.findAll({
+    const orders = await OrderItem.findAll({
       include: [
         {
-          model: OrderItem,
-          as: "orderItems",
-          include: [
-            {
-              model: User,
-              as: "customer", // Include user details for each order
-            },
-            {
-              model: Pizza,
-              as: "pizza", // Include pizza details for each order item
-            },
-            {
-              model: Topping,
-              as: "customToppings", // Include custom toppings for each pizza
-            },
-          ],
+          model: User,
+          as: "customer", // Include user details for each order
+        },
+        {
+          model: Pizza,
+          as: "pizza", // Include pizza details for each order item
+        },
+        {
+          model: Topping,
+          as: "customToppings", // Include custom toppings for each pizza
         },
       ],
     });
@@ -118,6 +112,7 @@ const updateOrderStatus = async (req, res) => {
   const { id } = req.params;
   const { status } = req.body;
   const ability = req.ability; // CASL ability object from middleware
+  const restaurantId = req.user.restaurantId;
 
   try {
     const order = await OrderItem.findByPk(id);
@@ -128,7 +123,8 @@ const updateOrderStatus = async (req, res) => {
     // Check if the user is allowed to update the status of this order
     ForbiddenError.from(ability).throwUnlessCan(
       "update",
-      subject("Order", order)
+      "Order",
+      restaurantId
     );
 
     // Update the order status

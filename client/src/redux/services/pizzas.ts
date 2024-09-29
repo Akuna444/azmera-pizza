@@ -8,6 +8,12 @@ export const toppingApiSlice = apiSlice.injectEndpoints({
       }),
       providesTags: ["Pizzas"],
     }),
+    getPizza: builder.query({
+      query: (id) => ({
+        url: `/pizzas/one/${id}`,
+      }),
+      providesTags: ["Pizzas"],
+    }),
     postPizzas: builder.mutation({
       query: (data) => ({
         url: `/pizzas/add`,
@@ -19,4 +25,5 @@ export const toppingApiSlice = apiSlice.injectEndpoints({
   }),
 });
 
-export const { useGetAllPizzasQuery, usePostPizzasMutation } = toppingApiSlice;
+export const { useGetAllPizzasQuery, useGetPizzaQuery, usePostPizzasMutation } =
+  toppingApiSlice;

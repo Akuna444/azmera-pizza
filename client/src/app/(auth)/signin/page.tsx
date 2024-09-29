@@ -42,26 +42,19 @@ const LoginPage = () => {
     },
     validate: withZodSchema(LoginSchema),
     onSubmit: async (values) => {
+      const dataToSend = {
+        ...values,
+        isAdmin,
+      };
       setIsloading(true);
-      let res;
-      if (isAdmin) {
-        res = await dispatch(restaurantLogin(values));
-        console.log(res, "thisisis");
-        if (restaurantLogin.fulfilled.match(res)) {
-          router.push("/dashboard");
-        } else {
-          setError(res?.payload || "Failed to login");
-        }
+      const res = await dispatch(userLogin(dataToSend));
+      console.log("dkfjs", res);
+      if (userLogin.fulfilled.match(res)) {
+        router.push(isAdmin ? "/dashboard" : "/");
       } else {
-        res = await dispatch(userLogin(values));
-        console.log("dkfjs", res);
-        if (userLogin.fulfilled.match(res)) {
-          router.push("/");
-        } else {
-          setError(res?.payload || "Failed to login");
-        }
+        setIsloading(false);
+        setError(res?.payload || "Failed to login");
       }
-      setIsloading(false);
     },
   });
 
