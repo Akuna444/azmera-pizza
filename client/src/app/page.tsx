@@ -35,7 +35,7 @@ const PizzaListPage = () => {
                 crossOrigin="anonymous"
                 component="img"
                 height="200"
-                image={`http://localhost:5000/${product.imageUrl}`}
+                image={`${process.env.API_BASE_URL}/${product.imageUrl}`}
                 alt={product.name}
               />
               <CardContent>

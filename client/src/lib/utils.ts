@@ -5,4 +5,4 @@ export function getFromLocalStorage(key: string) {
   return localStorage.getItem(key);
 }
 
-export const backendURL = "http://localhost:5000/api";
+export const backendURL = process.env.API_BASE_URL;
