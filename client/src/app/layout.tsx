@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { ReactNode, Suspense } from "react";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v14-appRouter";
 import { Roboto } from "next/font/google";
 import { ThemeProvider } from "@mui/material/styles";
@@ -23,7 +23,9 @@ export default function RootLayout({ children }: RootLayoutProps) {
       <body className={roboto.variable}>
         <AppRouterCacheProvider>
           <StoreProvider>
-            <ThemeProvider theme={theme}>{children}</ThemeProvider>
+            <ThemeProvider theme={theme}>
+              <Suspense fallback={<div>Loading...</div>}>{children}</Suspense>
+            </ThemeProvider>
           </StoreProvider>
         </AppRouterCacheProvider>
       </body>
