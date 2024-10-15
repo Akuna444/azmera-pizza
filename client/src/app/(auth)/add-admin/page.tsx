@@ -55,7 +55,7 @@ const AddAdminPage = () => {
         };
         setIsloading(true);
         const { status } = await axios.post(
-          `${backendURL}/auth/add-manager`, // Change endpoint as needed
+          `${backendURL}/api/auth/add-manager`, // Change endpoint as needed
           { ...values, restaurantId },
           config
         );

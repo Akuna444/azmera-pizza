@@ -61,7 +61,7 @@ const SignUpPage = () => {
         };
         setLoading(true);
         const { status } = await axios.post(
-          `${backendURL}/auth/register`,
+          `${backendURL}/api/auth/register`,
           { ...values, restaurantImage },
           config
         );
@@ -98,7 +98,7 @@ const SignUpPage = () => {
         };
         setLoading(true);
         const { data, status } = await axios.post(
-          `${backendURL}/restaurant/add`,
+          `${backendURL}/api/restaurant/add`,
           values,
           config
         );

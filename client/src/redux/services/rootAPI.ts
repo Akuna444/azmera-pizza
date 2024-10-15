@@ -15,7 +15,7 @@ export const apiSlice = createApi({
   reducerPath: "api",
   tagTypes: ["Orders", "Toppings", "Pizzas", "Roles"],
   baseQuery: fetchBaseQuery({
-    baseUrl: backendURL,
+    baseUrl: `${backendURL}/api`,
     prepareHeaders: (headers, { getState }) => {
       return addTokenToRequest(headers, { getState });
     },

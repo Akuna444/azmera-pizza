@@ -27,7 +27,7 @@ export const userLogin = createAsyncThunk<
       };
 
       const response = await axios.post<User>(
-        `${backendURL}/auth/${isAdmin ? "admin-login" : "login"}`,
+        `${backendURL}/api/auth/${isAdmin ? "admin-login" : "login"}`,
         { email, password },
         config
       );
@@ -57,7 +57,7 @@ export const userLogin = createAsyncThunk<
 export const logoutUser = () => async (dispatch) => {
   try {
     await axios.post(
-      `${backendURL}/auth/logout`,
+      `${backendURL}/api/auth/logout`,
       {},
       { withCredentials: true }
     );
