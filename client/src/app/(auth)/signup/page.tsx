@@ -37,6 +37,7 @@ const SignUpPage = () => {
   const router = useRouter();
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [restaurantImage, setRestaurantImage] = useState(null);
 
   // Toggle between User and Restaurant forms
   const toggleForm = () => setIsRestaurant(!isRestaurant);
@@ -61,7 +62,7 @@ const SignUpPage = () => {
         setLoading(true);
         const { status } = await axios.post(
           `${backendURL}/auth/register`,
-          values,
+          { ...values, restaurantImage },
           config
         );
         setLoading(false);
@@ -76,6 +77,10 @@ const SignUpPage = () => {
       }
     },
   });
+
+  const handleFileChange = (e) => {
+    setRestaurantImage(e.target.files[0]);
+  };
 
   // Formik setup for Restaurant registration
   const restaurantFormik = useFormik({
@@ -248,6 +253,17 @@ const SignUpPage = () => {
                   value={restaurantFormik.values.location}
                   onChange={restaurantFormik.handleChange}
                   onBlur={restaurantFormik.handleBlur}
+                />
+              </FormControl>
+              <FormControl>
+                <InputLabel htmlFor="restaurantImage">
+                  restaurant Image
+                </InputLabel>
+                <Input
+                  id="restaurantImage"
+                  name="restaurantImage"
+                  type="file"
+                  onChange={handleFileChange}
                 />
               </FormControl>
 

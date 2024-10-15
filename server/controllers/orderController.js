@@ -5,12 +5,14 @@ const OrderItem = require("../models/OrderItem");
 const Pizza = require("../models/Pizza");
 const Topping = require("../models/Topping");
 const User = require("../models/User");
+const Restaurant = require("../models/Restaurant");
 
 // Create a new order with multiple pizzas, quantities, and custom toppings
 const createOrder = async (req, res) => {
   const { orderItems } = req.body; // No need for customerId since it's decoded from req.user
   const customerId = req.user.id; // Get the user ID from the decoded token
   const ability = req.ability; // CASL ability object from middleware
+  console.log(req.body, "orderItems");
 
   try {
     // Check if the user is allowed to create orders
@@ -88,7 +90,13 @@ const getOrders = async (req, res) => {
         },
         {
           model: Pizza,
-          as: "pizza", // Include pizza details for each order item
+          as: "pizza",
+          include: [
+            {
+              model: Restaurant,
+              where: { id: restaurantId }, // Filter orders by restaurantId
+            },
+          ], // Include pizza details for each order item
         },
         {
           model: Topping,

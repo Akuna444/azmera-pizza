@@ -9,11 +9,14 @@ export const orderApiSlice = apiSlice.injectEndpoints({
       providesTags: ["Orders"],
     }),
     postOrder: builder.mutation({
-      query: (data) => ({
-        url: `/orders/add`,
-        method: "POST",
-        body: status,
-      }),
+      query: (data) => {
+        const orderItems = { orderItems: data };
+        return {
+          url: `/orders/add`,
+          method: "POST",
+          body: orderItems,
+        };
+      },
       invalidatesTags: ["Orders"],
     }),
     updateOrder: builder.mutation({

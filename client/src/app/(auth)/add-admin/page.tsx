@@ -91,6 +91,7 @@ const AddAdminPage = () => {
       ></Box>
 
       <form onSubmit={formik.handleSubmit}>
+        <h2>Add Admin</h2>
         <FormGroup
           sx={{
             alignSelf: "center",

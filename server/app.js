@@ -5,6 +5,7 @@ const helmet = require("helmet");
 const morgan = require("morgan");
 const cookieParser = require("cookie-parser");
 const { errorHandler, notFound } = require("./middlewares/errorHandler");
+const path = require("path");
 
 // Import routes
 const authRoutes = require("./routes/authRoutes");
@@ -28,6 +29,8 @@ app.use(helmet());
 app.use(morgan("dev"));
 app.use(express.json());
 app.use(cookieParser());
+
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // Routes
 app.use("/api/auth", authRoutes);

@@ -168,10 +168,12 @@ const adminlogin = async (req, res) => {
     if (!user) {
       return res.status(400).json({ message: "Invalid credentials" });
     }
-    const role = Role.findByPk(user.roleId);
+    const role = await Role.findByPk(user.roleId);
     if (!role) {
       return res.status(400).json({ message: "Invalid role" });
     }
+
+    console.log("thsi akd", role);
 
     if (user.Role.name === "customer") {
       return res.status(403).json({ message: "Unauthorized" });

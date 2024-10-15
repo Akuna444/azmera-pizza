@@ -16,9 +16,9 @@ function defineAbilitiesFor(user) {
     can("read", "Order", { restaurantId }); // Can read orders for their restaurant
     can("update", "Order", { restaurantId }); // Can update the order status for their restaurant's orders
     can("read", "User", { restaurantId }); // Can read customers of their restaurant
-    can("create", "User", { restaurantId }); // Can create users for their restaurant // Can create roles for their restaurant
+    can("create", "User", { restaurantId });
+    can("create", "Role");
   } else if (user.role.name === "customer") {
-    // Customers can only create and read their own orders
     can("create", "Order");
     can("read", "Order", { customerId: user.id });
   }

@@ -29,7 +29,8 @@ const createRestaurant = async (req, res) => {
     const restaurant = await Restaurant.create({
       name,
       location,
-      ownerId: owner ? owner.id : null, // Assign ownerId only if an owner was provided
+      ownerId: owner ? owner.id : null,
+      restaurantImage: req.file ? req.file.path : null, // Assign ownerId only if an owner was provided
     });
 
     // Update the owner with the newly created restaurant's ID if ownerId was provided

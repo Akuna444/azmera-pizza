@@ -10,9 +10,10 @@ const applyAbilities = require("../middlewares/applyAbilities"); // CASL middlew
 const authMiddleware = require("../middlewares/authMiddleware"); // JWT authentication middleware
 const validate = require("../middlewares/validate"); // Validation middleware
 const restaurantSchema = require("../validations/restaurant"); // Validation schema for restaurant creation and updates
+const upload = require("../middlewares/multerMiddleware");
 
 // Create a restaurant (Super Admin only, with optional ownerId)
-router.post("/add", createRestaurant);
+router.post("/add", upload.single("restaurantImage"), createRestaurant);
 
 // Get all restaurants (Super Admin only)
 router.get(

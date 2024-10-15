@@ -20,6 +20,11 @@ const Pizza = sequelize.define(
       type: DataTypes.FLOAT,
       allowNull: false,
     },
+    imageUrl: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+
     restaurantId: {
       type: DataTypes.UUID,
       allowNull: false,
@@ -34,6 +39,7 @@ const Pizza = sequelize.define(
   }
 );
 
+// Pizza.sync({ force: true });
 // Relations
 Pizza.belongsTo(Restaurant, { foreignKey: "restaurantId" });
 Restaurant.hasMany(Pizza, { foreignKey: "restaurantId" });

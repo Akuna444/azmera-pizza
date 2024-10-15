@@ -45,21 +45,20 @@ const PizzaDetailPage = () => {
   };
 
   const handleSubmit = async (values) => {
-    const orderData = {
-      orderItems: [
-        {
-          pizzaId: id,
-          quantity: values.quantity,
-          customToppings: values.customToppings, // Array of selected topping IDs
-        },
-      ],
-    };
-    const res = await postOrder(orderData);
-
-    // Check if the order was successful
-    if (res.data?.success) {
-      setDialogOpen(true); // Open the success dialog
+    const orderItems = [
+      {
+        pizzaId: id,
+        quantity: values.quantity,
+        customToppings: values.customToppings, // Array of selected topping IDs
+      },
+    ];
+    try {
+      await postOrder(orderItems).unwrap();
+      setDialogOpen(true);
+    } catch (error) {
+      console.log(error);
     }
+    // Open the success dialog
   };
 
   const handleClose = () => {
@@ -70,9 +69,10 @@ const PizzaDetailPage = () => {
     <Box sx={{ maxWidth: 600, margin: "auto", mt: 4 }}>
       <Card>
         <CardMedia
+          crossOrigin="anonymous"
           component="img"
           height="300"
-          image={data?.imageUrl || "https://example.com/pizza.jpg"}
+          image={`http://localhost:5000/${data.imageUrl}`}
           alt={data?.name || "Pizza"}
         />
         <CardContent>

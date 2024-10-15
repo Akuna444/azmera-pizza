@@ -2,17 +2,6 @@
 const { DataTypes } = require("sequelize");
 const { sequelize } = require("../config/db");
 
-const permissionsEnum = [
-  "customer",
-  "super_admin",
-  "restaurant_manager",
-  "update_order_status",
-  "see_orders",
-  "add_users",
-  "see_customers",
-  "create_roles",
-];
-
 const Role = sequelize.define(
   "Role",
   {
@@ -26,8 +15,17 @@ const Role = sequelize.define(
       allowNull: false,
       unique: true, // Role names must be unique
     },
+    active: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: true, // Set default to true
+      allowNull: false,
+    },
+    restaurantId: {
+      type: DataTypes.UUID,
+      allowNull: true, // Optional: Set to false if required
+    },
     permissions: {
-      type: DataTypes.ARRAY(DataTypes.ENUM(...permissionsEnum)), // Store permissions as an array of enums
+      type: DataTypes.ARRAY(DataTypes.STRING), // Store permissions as an array of enums
       allowNull: false,
       defaultValue: [], // Default to an empty array
     },

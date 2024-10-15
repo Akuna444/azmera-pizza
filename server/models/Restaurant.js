@@ -17,6 +17,10 @@ const Restaurant = sequelize.define(
     location: {
       type: DataTypes.STRING,
     },
+    restaurantImage: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
     ownerId: {
       type: DataTypes.UUID,
       allowNull: true,

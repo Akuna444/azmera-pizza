@@ -28,13 +28,14 @@ const PizzaListPage = () => {
         <LogoutButton />
       </Typography>
       <Grid container spacing={4}>
-        {pizzas.map((product) => (
+        {pizzas?.map((product) => (
           <Grid item xs={12} sm={6} md={4} key={product.id}>
             <Card>
               <CardMedia
+                crossOrigin="anonymous"
                 component="img"
                 height="200"
-                image={product.image}
+                image={`http://localhost:5000/${product.imageUrl}`}
                 alt={product.name}
               />
               <CardContent>
