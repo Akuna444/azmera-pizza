@@ -15,6 +15,7 @@ import {
 import LogoutButton from "@/components/ui/LogoutButton";
 import { useGetAllPizzasQuery } from "@/redux/services/pizzas";
 import Link from "next/link";
+import { backendURL } from "@/lib/utils";
 
 const PizzaListPage = () => {
   const { data: pizzas, isLoading } = useGetAllPizzasQuery();
@@ -35,7 +36,7 @@ const PizzaListPage = () => {
                 crossOrigin="anonymous"
                 component="img"
                 height="200"
-                image={`${process.env.API_BASE_URL}/${product.imageUrl}`}
+                image={`${backendURL}/${product.imageUrl}`}
                 alt={product.name}
               />
               <CardContent>

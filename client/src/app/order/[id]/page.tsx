@@ -25,6 +25,7 @@ import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import { Formik, Form, FieldArray } from "formik";
 import { usePostOrderMutation } from "@/redux/services/orders";
+import { backendURL } from "@/lib/utils";
 
 const PizzaDetailPage = () => {
   const params = useParams();
@@ -72,7 +73,7 @@ const PizzaDetailPage = () => {
           crossOrigin="anonymous"
           component="img"
           height="300"
-          image={`http://localhost:5000/${data.imageUrl}`}
+          image={`${backendURL}/${data.imageUrl}`}
           alt={data?.name || "Pizza"}
         />
         <CardContent>
