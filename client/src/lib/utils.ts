@@ -5,4 +5,4 @@ export function getFromLocalStorage(key: string) {
   return localStorage.getItem(key);
 }
 
-export const backendURL = process.env.API_BASE_URL;
+export const backendURL = "https://azmera-pizza.onrender.com";
